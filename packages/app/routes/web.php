@@ -19,7 +19,13 @@ Route::name('filament.')
                 ->group(function () use ($context) {
                     Route::name('auth.')->group(function () use ($context) {
                         if ($context->hasLogin()) {
-                            Route::get('/login', $context->getLoginPage())->name('login');
+                            $page = $context->getLoginPage();
+
+                            if (class_exists($page)) {
+                                Route::get('/login', $page)->name('login');
+                            } else {
+                                Route::redirect('/login', $page)->name('login');
+                            }
                         }
 
                         if ($context->hasPasswordReset()) {
